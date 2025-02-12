@@ -4,16 +4,17 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Titre</title>
-    <link rel="stylesheet" href="styles.css">
+    <style>
+        /* Styles pour iframe */
+        #youtube-iframe {
+            width: 100%;
+            height: 90vh; /* Ajustez la hauteur selon vos besoins */
+            border: none;
+        }
+    </style>
 </head>
 <body>
-    <div class="controls">
-        <button id="startButton">Démarrer</button>
-        <button id="resetButton" disabled>Réinitialiser</button>
-        <span id="populationLabel">Population: 20</span>
-    </div>
-    <canvas id="bacteriaCanvas" width="800" height="600"></canvas>
-    
-    <script src="script.js"></script>
+    <h1>Bienvenue sur ma page YouTube intégrée!</h1>
+    <iframe id="youtube-iframe" src="https://www.youtube.com" allowfullscreen></iframe>
 </body>
 </html>
