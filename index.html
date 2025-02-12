@@ -4,56 +4,29 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Titre</title>
-    <style>
-        body {
-            font-family: Arial, sans-serif;
-            margin: 20px;
-        }
-        .video {
-            margin: 20px 0;
-        }
-        iframe {
-            width: 560px;
-            height: 315px;
-        }
-    </style>
+    <link rel="stylesheet" href="styles.css">
 </head>
 <body>
+    <header>
+        <h1>Recherche et Visionnage de Vidéos YouTube</h1>
+        <input type="text" id="search-input" placeholder="Recherchez une vidéo...">
+        <button id="search-button">Chercher</button>
+    </header>
 
-<h1>Recherche de vidéos YouTube</h1>
-<input type="text" id="searchTerm" placeholder="Rechercher une vidéo...">
-<button id="searchButton">Rechercher</button>
-<div id="results"></div>
+    <main>
+        <section class="video-container" id="video-container">
+            <!-- La vidéo sera intégrée ici -->
+        </section>
 
-<script>
-    const apiKey = 'AIzaSyDI8jV1kbuyL8KyBYfR09SMadLrSIDRh-E'; // Remplacez par votre clé API
+        <section class="results" id="results">
+            <!-- Les résultats de recherche seront affichés ici -->
+        </section>
+    </main>
 
-    document.getElementById('searchButton').onclick = function() {
-        const searchTerm = document.getElementById('searchTerm').value;
-        const url = `https://www.googleapis.com/youtube/v3/search?key=${apiKey}&q=${encodeURIComponent(searchTerm)}&part=snippet&type=video&maxResults=5`;
+    <footer>
+        <p>© 2025 Mon Site Web. Tous droits réservés.</p>
+    </footer>
 
-        fetch(url)
-            .then(response => response.json())
-            .then(data => {
-                const resultsDiv = document.getElementById('results');
-                resultsDiv.innerHTML = ''; // Réinitialiser les résultats précédents
-
-                data.items.forEach(item => {
-                    const title = item.snippet.title;
-                    const videoId = item.id.videoId;
-
-                    resultsDiv.innerHTML += `
-                        <div class="video">
-                            <h3>${title}</h3>
-                            <iframe src="https://www.youtube.com/embed/${videoId}" frameborder="0" allowfullscreen></iframe>
-                            <p><a href="https://www.youtube.com/watch?v=${videoId}" target="_blank">Regarder sur YouTube</a></p>
-                        </div>
-                    `;
-                });
-            })
-            .catch(error => console.error('Erreur:', error));
-    };
-</script>
-
+    <script src="script.js"></script>
 </body>
 </html>
