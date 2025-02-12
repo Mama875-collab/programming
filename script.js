@@ -1,107 +1,88 @@
-// script.js
-const canvas = document.getElementById('gameCanvas');
+const canvas = document.getElementById('simulationCanvas');
 const ctx = canvas.getContext('2d');
 const startButton = document.getElementById('startButton');
 const restartButton = document.getElementById('restartButton');
-const scoreDisplay = document.getElementById('score');
-const gameOverlay = document.getElementById('game-overlay');
 
 canvas.width = 800;
 canvas.height = 600;
 
-let score = 0;
-let targets = [];
-let gameActive = false;
-let targetInterval = null;
+const bacteriaImage = new Image();
+bacteriaImage.src = 'bac.png'; // Assurez-vous que bac.png est dans le même dossier que ce fichier
 
-// Création de cibles
-function createTarget() {
-    const targetSize = 30;
-    const target = {
-        x: Math.random() * (canvas.width - targetSize),
-        y: Math.random() * (canvas.height - targetSize),
-        size: targetSize,
-    };
+let bacteria = [];
+let simulationRunning = false;
 
-    targets.push(target);
-}
-
-// Dessiner les cibles
-function drawTargets() {
-    targets.forEach(target => {
-        ctx.fillStyle = 'red';
-        ctx.fillRect(target.x, target.y, target.size, target.size);
-    });
-}
-
-// Mise à jour du score
-function updateScore() {
-    scoreDisplay.innerText = `Score : ${score}`;
-}
-
-// Démarrer le jeu
-function startGame() {
-    gameActive = true;
-    gameOverlay.style.display = 'none';
-    targetInterval = setInterval(createTarget, 1000);
-    gameLoop();
-}
-
-// Boucle de jeu
-function gameLoop() {
-    ctx.clearRect(0, 0, canvas.width, canvas.height);
-    drawTargets();
-    requestAnimationFrame(gameLoop);
-}
-
-// Événement clic
-canvas.addEventListener('click', function(event) {
-    if (!gameActive) return;
-
-    const rect = canvas.getBoundingClientRect();
-    const mouseX = event.clientX - rect.left;
-    const mouseY = event.clientY - rect.top;
-
-    targets.forEach((target, index) => {
-        if (
-            mouseX >= target.x &&
-            mouseX <= target.x + target.size &&
-            mouseY >= target.y &&
-            mouseY <= target.y + target.size
-        ) {
-            // Vérifier si la cible a été touchée
-            targets.splice(index, 1); // Supprimer la cible
-            score++;
-            updateScore();
-        }
-    });
-});
-
-// Événement clic sur le bouton de démarrage
-startButton.addEventListener('click', startGame);
-
-// Événement clic sur le bouton de reprise
-restartButton.addEventListener('click', function() {
-    gameActive = false;
-    clearInterval(targetInterval);
-    targets = [];
-    score = 0;
-    updateScore();
-    startGame();
-});
-
-// Fin du jeu
-function endGame() {
-    gameActive = false;
-    clearInterval(targetInterval);
-    gameOverlay.style.display = 'block';
-    restartButton.style.display = 'block';
-    startButton.style.display = 'none';
-}
-
-// Détection de fin de jeu
-setInterval(function() {
-    if (targets.length > 50) {
-        endGame();
+class Bacteria {
+    constructor(x, y) {
+        this.x = x;
+        this.y = y;
+        this.size = 20; // Initial size of the bacteria
     }
-}, 1000);
+
+    draw() {
+        ctx.drawImage(bacteriaImage, this.x, this.y, this.size, this.size);
+    }
+
+    update() {
+        // Simple random movement
+        this.x += (Math.random() - 0.5) * 2;
+        this.y += (Math.random() - 0.5) * 2;
+
+        // Keep the bacteria within the canvas bounds
+        if (this.x < 0) this.x = 0;
+        if (this.x > canvas.width - this.size) this.x = canvas.width - this.size;
+        if (this.y < 0) this.y = 0;
+        if (this.y > canvas.height - this.size) this.y = canvas.height - this.size;
+    }
+}
+
+function createBacteria() {
+    // Create new bacteria at random positions
+    const x = Math.random() * (canvas.width - 20);
+    const y = Math.random() * (canvas.height - 20);
+    bacteria.push(new Bacteria(x, y));
+}
+
+function draw() {
+    ctx.clearRect(0, 0, canvas.width, canvas.height);
+    bacteria.forEach(bac => {
+        bac.update();
+        bac.draw();
+    });
+}
+
+function loop() {
+    if (simulationRunning) {
+        draw();
+        requestAnimationFrame(loop);
+    }
+}
+
+// Lancer la simulation
+startButton.addEventListener('click', () => {
+    bacteria = [];
+    for (let i = 0; i < 20; i++) { // Create 20 initial bacteria
+        createBacteria();
+    }
+    simulationRunning = true;
+    loop();
+    startButton.style.display = 'none';
+    restartButton.style.display = 'block';
+});
+
+// Recommencer la simulation
+restartButton.addEventListener('click', () => {
+    bacteria = [];
+    for (let i = 0; i < 20; i++) {
+        createBacteria();
+    }
+    simulationRunning = true;
+    loop();
+});
+
+// Stop the simulation or cleanup as needed
+function stopSimulation() {
+    simulationRunning = false;
+    restartButton.style.display = 'none';
+    startButton.style.display = 'block';
+}
