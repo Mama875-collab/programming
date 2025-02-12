@@ -4,35 +4,50 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Titre</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 20px;
+        }
+        .video {
+            margin: 20px 0;
+        }
+        iframe {
+            width: 560px;
+            height: 315px;
+        }
+    </style>
 </head>
 <body>
 
-<h1>Recherche YouTube</h1>
+<h1>Recherche de vidéos YouTube</h1>
 <input type="text" id="searchTerm" placeholder="Rechercher une vidéo...">
 <button id="searchButton">Rechercher</button>
-<div id="result"></div>
+<div id="results"></div>
 
 <script>
     const apiKey = 'AIzaSyDI8jV1kbuyL8KyBYfR09SMadLrSIDRh-E'; // Remplacez par votre clé API
 
     document.getElementById('searchButton').onclick = function() {
         const searchTerm = document.getElementById('searchTerm').value;
-        const url = `https://www.googleapis.com/youtube/v3/search?key=${apiKey}&q=${encodeURIComponent(searchTerm)}&part=snippet,id&type=video&maxResults=10`;
+        const url = `https://www.googleapis.com/youtube/v3/search?key=${apiKey}&q=${encodeURIComponent(searchTerm)}&part=snippet&type=video&maxResults=5`;
 
         fetch(url)
             .then(response => response.json())
             .then(data => {
-                const resultDiv = document.getElementById('result');
-                resultDiv.innerHTML = '';
+                const resultsDiv = document.getElementById('results');
+                resultsDiv.innerHTML = ''; // Réinitialiser les résultats précédents
 
                 data.items.forEach(item => {
                     const title = item.snippet.title;
                     const videoId = item.id.videoId;
-                    const thumbnail = item.snippet.thumbnails.default.url;
-                    resultDiv.innerHTML += `
-                        <h3>${title}</h3>
-                        <img src="${thumbnail}">
-                        <p><a href="https://www.youtube.com/watch?v=${videoId}" target="_blank">Regarder la vidéo</a></p>
+
+                    resultsDiv.innerHTML += `
+                        <div class="video">
+                            <h3>${title}</h3>
+                            <iframe src="https://www.youtube.com/embed/${videoId}" frameborder="0" allowfullscreen></iframe>
+                            <p><a href="https://www.youtube.com/watch?v=${videoId}" target="_blank">Regarder sur YouTube</a></p>
+                        </div>
                     `;
                 });
             })
