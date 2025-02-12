@@ -3,37 +3,18 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Mairie de Château-Gontier sur Mayenne - Informatique</title>
+    <title>Mairie de Chateau gontier</title>
     <link rel="stylesheet" href="styles.css">
 </head>
 <body>
-    <header>
-        <h1>Mairie de Château-Gontier sur Mayenne</h1>
-        <nav>
-            <a href="#services">Services Numériques</a>
-            <a href="#actualites">Actualités</a>
-            <a href="#contact">Contact</a>
-        </nav>
-    </header>
-
-    <section>
-        <h2>Bienvenue à la Mairie de Château-Gontier</h2>
-        <p>La mairie de Château-Gontier sur Mayenne est engagée dans l'amélioration et la modernisation des services aux citoyens à travers l'informatique. Nous travaillons pour vous offrir des solutions numériques accessibles, simples et efficaces.</p>
-        
-        <button id="startButton" >Show more</button>
-    </section>
-
-    <div id="gameContainer">
-        <h2>Jeu FPS : Seconde Guerre Mondiale</h2>
-        <p id="score">Score : 0</p>
-        <p id="partiesCount">Nombre de parties : 0</p>
-        <canvas id="gameCanvas" width="800" height="600"></canvas>
+    <div class="game-container">
+        <div class="game-overlay">
+            <h1>Jeu FPS : Seconde Guerre Mondiale</h1>
+            <p id="score">Score : 0</p>
+            <button id="startButton">Commencer le jeu</button>
+        </div>
+        <canvas id="gameCanvas"></canvas>
     </div>
-
-    <footer>
-        <p>&copy; 2023 Mairie de Château-Gontier sur Mayenne. Tous droits réservés.</p>
-    </footer>
-
     <script src="script.js"></script>
 </body>
 </html>
