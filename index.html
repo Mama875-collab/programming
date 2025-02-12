@@ -8,23 +8,91 @@
 </head>
 <body>
     <header>
-        <h1>Recherche et Visionnage de Vidéos YouTube</h1>
-        <input type="text" id="search-input" placeholder="Recherchez une vidéo...">
-        <button id="search-button">Chercher</button>
+        <h1>Installation de la Fibre Optique</h1>
+        <nav>
+            <ul>
+                <li><a href="#about">À Propos</a></li>
+                <li><a href="#services">Nos Services</a></li>
+                <li><a href="#testimonials">Témoignages</a></li>
+                <li><a href="#gallery">Galerie</a></li>
+                <li><button id="toggle-search-button">En savoir plus</button></li>
+                <li><a href="#faq">FAQ</a></li>
+                <li><a href="#contact">Contact</a></li>
+            </ul>
+        </nav>
     </header>
 
     <main>
-        <section class="video-container" id="video-container">
-            <!-- La vidéo sera intégrée ici -->
+        <section id="about">
+            <h2>À Propos de la Fibre Optique</h2>
+            <p>La fibre optique est une technologie de transmission de données qui utilise des fils de verre pour transmettre des informations sous forme de lumière. Cela permet des connexions Internet ultra-rapides et fiables, idéales pour les foyers et les entreprises.</p>
+            <h3>Les Avantages de la Fibre Optique</h3>
+            <ul>
+                <li>Connectivité ultra-rapide</li>
+                <li>Résistance aux interférences</li>
+                <li>Large bande passante</li>
+                <li>Coupures de signal minimales</li>
+            </ul>
         </section>
 
-        <section class="results" id="results">
-            <!-- Les résultats de recherche seront affichés ici -->
+        <section id="services">
+            <h2>Nos Services</h2>
+            <ul>
+                <li>Installation de la fibre optique dans les maisons et les entreprises</li>
+                <li>Vérification et amélioration de la connexion existante</li>
+                <li>Maintenance et dépannage des installations de fibre optique</li>
+                <li>Conseils personnalisés sur le choix d'une offre adaptée à vos besoins</li>
+            </ul>
+        </section>
+
+        <section id="testimonials">
+            <h2>Témoignages de Clients</h2>
+            <blockquote>
+                <p>"L'installation de la fibre optique a transformé notre connexion Internet. C'est tellement plus rapide!" - Claire T.</p>
+            </blockquote>
+            <blockquote>
+                <p>"Une équipe professionnelle et sympathique. Je recommande vivement !" - Jean-Pierre M.</p>
+            </blockquote>
+        </section>
+
+        <section id="gallery">
+            <h2>Galerie</h2>
+            <div class="gallery-container">
+                <img src="fiber-installation.jpg" alt="Installation de fibre optique" class="gallery-item">
+                <img src="fiber-cable.jpg" alt="Câble en fibre optique" class="gallery-item">
+                <img src="fiber-network.jpg" alt="Réseau en fibre optique" class="gallery-item">
+            </div>
+        </section>
+
+        <section id="faq">
+            <h2>FAQ</h2>
+            <div class="faq-item">
+                <h3>Qu'est-ce que la fibre optique ?</h3>
+                <p>La fibre optique est un moyen de transmettre des données à très haute vitesse grâce à des fils de verre qui transmettent la lumière.</p>
+            </div>
+            <div class="faq-item">
+                <h3>Quels sont les avantages de la fibre optique par rapport au cuivre ?</h3>
+                <p>La fibre optique offre une meilleure bande passante, une plus grande vitesse de connexion et une meilleure résistance aux interférences.</p>
+            </div>
+        </section>
+
+        <section class="search-container" id="search-container" style="display: none;">
+            <input type="text" id="search-input" placeholder="Recherchez une vidéo...">
+            <button id="search-button">Chercher</button>
+            <div class="results" id="results" style="display: none;"></div>
+        </section>
+
+        <section class="video-container" id="video-container">
+            <!-- La vidéo sera intégrée ici -->
         </section>
     </main>
 
     <footer>
-        <p>© 2025 Mon Site Web. Tous droits réservés.</p>
+        <section id="contact">
+            <h2>Contactez-nous</h2>
+            <p>Pour toute demande d'information, veuillez nous contacter au 01 23 45 67 89 ou par email à contact@fibreoptique.com.</p>
+        </section>
+        <p>© 2025 Mon Site Web sur la Fibre Optique. Tous droits réservés.</p>
     </footer>
 
     <script src="script.js"></script>
