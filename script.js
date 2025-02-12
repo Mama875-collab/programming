@@ -1,4 +1,4 @@
-const apiKey = 'VOTRE_CLE_API'; // Remplacez par votre clé API YouTube
+const apiKey = 'AIzaSyDI8jV1kbuyL8KyBYfR09SMadLrSIDRh-E'; // Remplacez par votre clé API YouTube
 const searchButton = document.getElementById('search-button');
 const searchInput = document.getElementById('search-input');
 const videoContainer = document.getElementById('video-container');
