@@ -1,88 +1,156 @@
-const canvas = document.getElementById('simulationCanvas');
-const ctx = canvas.getContext('2d');
-const startButton = document.getElementById('startButton');
-const restartButton = document.getElementById('restartButton');
+import javax.swing.*;
+import java.awt.*;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Random;
 
-canvas.width = 800;
-canvas.height = 600;
+public class BacteriaSimulation extends JPanel implements ActionListener {
 
-const bacteriaImage = new Image();
-bacteriaImage.src = 'bac.png'; // Assurez-vous que bac.png est dans le même dossier que ce fichier
+    private final int WIDTH = 800;
+    private final int HEIGHT = 600;
+    private final int BACTERIA_SIZE = 10;
+    private final int INITIAL_BACTERIA_COUNT = 20;
+    private final int DUPLICATION_NUMBER = 1; // Nombre de bactéries à dupliquer chaque seconde
 
-let bacteria = [];
-let simulationRunning = false;
+    private List<Bacteria> bacteria;
+    private Random random;
+    private int populationSize;
 
-class Bacteria {
-    constructor(x, y) {
-        this.x = x;
-        this.y = y;
-        this.size = 20; // Initial size of the bacteria
+    private Timer timer;
+    private JButton startButton, resetButton;
+    private JLabel populationLabel;
+    private static final int GRAPHIC_HEIGHT = 200;
+    private int frameCount = 0;
+
+    public BacteriaSimulation() {
+        setPreferredSize(new Dimension(WIDTH, HEIGHT + GRAPHIC_HEIGHT));
+        setBackground(Color.WHITE);
+
+        bacteria = new ArrayList<>();
+        random = new Random();
+        populationSize = INITIAL_BACTERIA_COUNT;
+
+        for (int i = 0; i < INITIAL_BACTERIA_COUNT; i++) {
+            bacteria.add(new Bacteria(random.nextInt(WIDTH), random.nextInt(HEIGHT)));
+        }
+
+        timer = new Timer(100, this); // Mise à jour toutes les 100 ms
+        timer.stop();
+
+        startButton = new JButton("Start");
+        startButton.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                timer.start();
+                startButton.setEnabled(false);
+                resetButton.setEnabled(true);
+            }
+        });
+
+        resetButton = new JButton("Reset");
+        resetButton.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                resetSimulation();
+            }
+        });
+        resetButton.setEnabled(false);
+
+        populationLabel = new JLabel("Population: " + populationSize);
+
+        JFrame frame = new JFrame("Bacteria Simulation");
+        frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+        frame.setLayout(new BorderLayout());
+        frame.add(this, BorderLayout.CENTER);
+        JPanel topPanel = new JPanel();
+        topPanel.add(startButton);
+        topPanel.add(resetButton);
+        topPanel.add(populationLabel);
+        frame.add(topPanel, BorderLayout.NORTH); // Ajout de la barre de boutons
+        frame.pack();
+        frame.setVisible(true);
     }
 
-    draw() {
-        ctx.drawImage(bacteriaImage, this.x, this.y, this.size, this.size);
+    private void resetSimulation() {
+        timer.stop();
+        bacteria.clear();
+        populationSize = INITIAL_BACTERIA_COUNT;
+        for (int i = 0; i < INITIAL_BACTERIA_COUNT; i++) {
+            bacteria.add(new Bacteria(random.nextInt(WIDTH), random.nextInt(HEIGHT)));
+        }
+        startButton.setEnabled(true);
+        resetButton.setEnabled(false);
+        populationLabel.setText("Population: " + populationSize);
+        frameCount = 0; // Réinitialiser le compteur de frames
+        repaint();
     }
 
-    update() {
-        // Simple random movement
-        this.x += (Math.random() - 0.5) * 2;
-        this.y += (Math.random() - 0.5) * 2;
+    @Override
+    protected void paintComponent(Graphics g) {
+        super.paintComponent(g);
+        // Dessiner les bactéries
+        for (Bacteria bacteria : bacteria) {
+            g.fillOval(bacteria.x, bacteria.y, BACTERIA_SIZE, BACTERIA_SIZE);
+        }
 
-        // Keep the bacteria within the canvas bounds
-        if (this.x < 0) this.x = 0;
-        if (this.x > canvas.width - this.size) this.x = canvas.width - this.size;
-        if (this.y < 0) this.y = 0;
-        if (this.y > canvas.height - this.size) this.y = canvas.height - this.size;
+        // Dessiner le graphique de la population
+        g.setColor(Color.RED);
+        g.fillRect(0, HEIGHT, graphWidth(), GRAPHIC_HEIGHT);
     }
-}
 
-function createBacteria() {
-    // Create new bacteria at random positions
-    const x = Math.random() * (canvas.width - 20);
-    const y = Math.random() * (canvas.height - 20);
-    bacteria.push(new Bacteria(x, y));
-}
-
-function draw() {
-    ctx.clearRect(0, 0, canvas.width, canvas.height);
-    bacteria.forEach(bac => {
-        bac.update();
-        bac.draw();
-    });
-}
-
-function loop() {
-    if (simulationRunning) {
-        draw();
-        requestAnimationFrame(loop);
+    // Méthode pour dessiner un graphique basé sur la taille de la population
+    private int graphWidth() {
+        return (int) (((double) populationSize / initialPopulation()) * WIDTH);
     }
-}
 
-// Lancer la simulation
-startButton.addEventListener('click', () => {
-    bacteria = [];
-    for (let i = 0; i < 20; i++) { // Create 20 initial bacteria
-        createBacteria();
+    private int initialPopulation() {
+        return INITIAL_BACTERIA_COUNT + (frameCount / 10) * DUPLICATION_NUMBER; // Compte initial des bactéries
     }
-    simulationRunning = true;
-    loop();
-    startButton.style.display = 'none';
-    restartButton.style.display = 'block';
-});
 
-// Recommencer la simulation
-restartButton.addEventListener('click', () => {
-    bacteria = [];
-    for (let i = 0; i < 20; i++) {
-        createBacteria();
+    @Override
+    public void actionPerformed(ActionEvent e) {
+        frameCount++;
+
+        // Dupliquer les bactéries
+        if (frameCount % 10 == 0) { // Chaque seconde
+            for (int i = 0; i < DUPLICATION_NUMBER; i++) {
+                bacteria.add(new Bacteria(random.nextInt(WIDTH), random.nextInt(HEIGHT)));
+            }
+            populationSize += DUPLICATION_NUMBER;
+            populationLabel.setText("Population: " + populationSize);
+        }
+
+        // Mettre à jour les positions des bactéries
+        for (Bacteria bacteria : bacteria) {
+            bacteria.move(WIDTH, HEIGHT);
+        }
+
+        repaint();
     }
-    simulationRunning = true;
-    loop();
-});
 
-// Stop the simulation or cleanup as needed
-function stopSimulation() {
-    simulationRunning = false;
-    restartButton.style.display = 'none';
-    startButton.style.display = 'block';
+    private class Bacteria {
+        int x, y;
+
+        public Bacteria(int x, int y) {
+            this.x = x;
+            this.y = y;
+        }
+
+        public void move(int width, int height) {
+            x += random.nextInt(3) - 1; // Déplacer aléatoirement entre -1 et 1
+            y += random.nextInt(3) - 1;
+
+            // Vérification des limites
+            if (x < 0) x = 0;
+            if (x > width - BACTERIA_SIZE) x = width - BACTERIA_SIZE;
+            if (y < 0) y = 0;
+            if (y > height - BACTERIA_SIZE) y = height - BACTERIA_SIZE;
+        }
+    }
+
+    public static void main(String[] args) {
+        SwingUtilities.invokeLater(BacteriaSimulation::new);
+    }
 }
