@@ -1,29 +1,27 @@
-const apiKey = 'AIzaSyDI8jV1kbuyL8KyBYfR09SMadLrSIDRh-E'; // Remplacez par votre clé API YouTube
+const apiKey = 'VOTRE_CLE_API'; // Remplacez par votre clé API YouTube
 const searchButton = document.getElementById('search-button');
 const searchInput = document.getElementById('search-input');
 const videoContainer = document.getElementById('video-container');
 const results = document.getElementById('results');
+const toggleSearchButton = document.getElementById('toggle-search-button');
+const searchContainer = document.getElementById('search-container');
 
-// Fonction pour rendre la vidéo déplaçable
-function makeDraggable(element) {
-    let offsetX, offsetY;
+// Montrer ou cacher la zone de recherche
+toggleSearchButton.addEventListener('click', () => {
+    if (searchContainer.style.display === 'none') {
+        searchContainer.style.display = 'block';
+        toggleSearchButton.innerText = "Cacher les informations";
+        results.style.display = 'none'; // Masquer les résultats au début
+    } else {
+        searchContainer.style.display = 'none';
+        toggleSearchButton.innerText = "En savoir plus";
+        results.innerHTML = ''; // Vider les résultats précédents
+        results.style.display = 'none'; // Masquer les résultats
+        videoContainer.innerHTML = ''; // Vider la vidéo précédente
+    }
+});
 
-    element.onmousedown = (e) => {
-        offsetX = e.clientX - element.getBoundingClientRect().left;
-        offsetY = e.clientY - element.getBoundingClientRect().top;
-        document.onmousemove = (e) => {
-            element.style.left = (e.clientX - offsetX) + 'px';
-            element.style.top = (e.clientY - offsetY) + 'px';
-            element.style.position = 'absolute';
-        };
-        document.onmouseup = () => {
-            document.onmousemove = null;
-            document.onmouseup = null;
-        };
-    };
-}
-
-// Rechercher des vidéos sur YouTube
+// Rechercher des vidéos sur YouTube lorsque l'utilisateur clique sur "Chercher"
 searchButton.addEventListener('click', () => {
     const query = searchInput.value;
     if (!query) return;
@@ -39,6 +37,11 @@ searchButton.addEventListener('click', () => {
 // Afficher les résultats de recherche
 function displayResults(videoItems) {
     results.innerHTML = ''; // Vider les résultats précédents
+    if (videoItems.length === 0) {
+        results.innerHTML = `<div>Aucun résultat trouvé.</div>`;
+        results.style.display = 'block'; // Afficher les résultats même si vides
+        return;
+    }
 
     videoItems.forEach(item => {
         const videoId = item.id.videoId;
@@ -52,6 +55,7 @@ function displayResults(videoItems) {
         };
         results.appendChild(resultDiv);
     });
+    results.style.display = 'block'; // Afficher les résultats
 }
 
 // Charger la vidéo sélectionnée
@@ -59,5 +63,4 @@ function loadVideo(videoId) {
     videoContainer.innerHTML = `
         <iframe src="https://www.youtube.com/embed/${videoId}" frameborder="0" allowfullscreen></iframe>
     `;
-    makeDraggable(videoContainer); // Rendre la vidéo déplaçable
 }
