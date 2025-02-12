@@ -1,3 +1,4 @@
+/* styles.css */
 .game-container {
     position: relative;
     margin: 0 auto;
@@ -28,10 +29,16 @@
     cursor: pointer;
 }
 
+#restartButton {
+    padding: 10px 20px;
+    font-size: 18px;
+    cursor: pointer;
+}
+
 #gameCanvas {
     position: absolute;
-    top: 20%;
+    top: 0;
     left: 0;
     width: 100%;
-    height: 80%;
+    height: 100%;
 }
