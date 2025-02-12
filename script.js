@@ -1,5 +1,10 @@
+// script.js
 const canvas = document.getElementById('gameCanvas');
 const ctx = canvas.getContext('2d');
+const startButton = document.getElementById('startButton');
+const restartButton = document.getElementById('restartButton');
+const scoreDisplay = document.getElementById('score');
+const gameOverlay = document.getElementById('game-overlay');
 
 canvas.width = 800;
 canvas.height = 600;
@@ -8,10 +13,6 @@ let score = 0;
 let targets = [];
 let gameActive = false;
 let targetInterval = null;
-
-const startButton = document.getElementById('startButton');
-const scoreDisplay = document.getElementById('score');
-const gameOverlay = document.querySelector('.game-overlay');
 
 // Création de cibles
 function createTarget() {
@@ -41,6 +42,7 @@ function updateScore() {
 // Démarrer le jeu
 function startGame() {
     gameActive = true;
+    gameOverlay.style.display = 'none';
     targetInterval = setInterval(createTarget, 1000);
     gameLoop();
 }
@@ -76,7 +78,30 @@ canvas.addEventListener('click', function(event) {
 });
 
 // Événement clic sur le bouton de démarrage
-startButton.addEventListener('click', function() {
-    gameOverlay.style.display = 'none';
+startButton.addEventListener('click', startGame);
+
+// Événement clic sur le bouton de reprise
+restartButton.addEventListener('click', function() {
+    gameActive = false;
+    clearInterval(targetInterval);
+    targets = [];
+    score = 0;
+    updateScore();
     startGame();
 });
+
+// Fin du jeu
+function endGame() {
+    gameActive = false;
+    clearInterval(targetInterval);
+    gameOverlay.style.display = 'block';
+    restartButton.style.display = 'block';
+    startButton.style.display = 'none';
+}
+
+// Détection de fin de jeu
+setInterval(function() {
+    if (targets.length > 50) {
+        endGame();
+    }
+}, 1000);
