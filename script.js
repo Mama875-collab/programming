@@ -8,7 +8,7 @@ const BACTERIA_IMAGE = new Image();
 BACTERIA_IMAGE.src = 'bac.png'; // Chemin vers votre image
 
 const INITIAL_BACTERIA_COUNT = 20;
-const DUPLICATION_INTERVAL = 1000; // Millisecondes
+const DUPLICATION_INTERVAL = 100; // Millisecondes
 
 let bacteria = [];
 let populationSize = INITIAL_BACTERIA_COUNT;
