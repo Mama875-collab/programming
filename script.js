@@ -44,7 +44,7 @@ youtubeSearchButton.addEventListener('click', () => {
 
 // Fonction pour rechercher sur Google
 function searchGoogle(query) {
-    fetch(`https://www.googleapis.com/customsearch/v1?key=${googleApiKey}&cx=YOUR_CUSTOM_SEARCH_ENGINE_ID&q=${query}`)
+    fetch(`https://www.googleapis.com/customsearch/v1?key=${googleApiKey}&cx=00746c2a86b294cd0&q=${query}`)
         .then(response => response.json())
         .then(data => displayGoogleResults(data.items))
         .catch(error => console.error('Erreur Google:', error));
