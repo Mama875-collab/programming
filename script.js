@@ -1,4 +1,4 @@
-const googleApiKey = 'YOUR_GOOGLE_SEARCH_API_KEY'; // Remplacez par votre clé API Google
+const googleApiKey = 'AIzaSyA4eqqy9F8KpaLwq2LRuqF8CpoIIr04u6s'; // Remplacez par votre clé API Google
 const youtubeApiKey = 'AIzaSyDI8jV1kbuyL8KyBYfR09SMadLrSIDRh-E'; // Remplacez par votre clé API YouTube
 
 const googleSearchButton = document.getElementById('google-search-button');
