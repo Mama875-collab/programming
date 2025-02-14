@@ -52,7 +52,8 @@ function searchGoogle(query) {
 
 // Fonction pour rechercher sur YouTube
 function searchYouTube(query) {
-    fetch(`https://www.googleapis.com/youtube/v3/search?key=${youtubeApiKey}&q=${query}&part=snippet&type=video`)
+    // Ajoute le paramètre maxResults à l'URL de la requête
+    fetch(`https://www.googleapis.com/youtube/v3/search?key=${youtubeApiKey}&q=${query}&part=snippet&type=video&maxResults=20`) // Modifie maxResults pour obtenir plus de résultats (ex: 20)
         .then(response => response.json())
         .then(data => displayYouTubeResults(data.items))
         .catch(error => console.error('Erreur YouTube:', error));
