@@ -23,6 +23,7 @@ toggleSearchButton.addEventListener('click', () => {
         toggleSearchButton.innerText = "En savoir plus";
         googleResults.style.display = 'none';
         youtubeResults.style.display = 'none';
+        videoContainer.innerHTML = ''; // Efface la vidéo quand on cache la recherche
     }
 });
 
