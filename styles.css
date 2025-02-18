@@ -109,3 +109,42 @@ footer {
     border: 1px solid #ccc;
     border-radius: 5px;
 }
+/* Style pour la section utilisateur */
+#user-area {
+    text-align: center;
+    margin-bottom: 20px;
+}
+
+#login-form, #user-info {
+    display: inline-block;
+    background-color: #fff;
+    padding: 20px;
+    border-radius: 8px;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+}
+
+#login-form input[type="text"],
+#login-form input[type="password"] {
+    width: 100%;
+    padding: 10px;
+    margin-bottom: 10px;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    box-sizing: border-box; /* Pour que le padding n'augmente pas la largeur */
+}
+
+#login-form button,
+#user-info button {
+    background-color: #00796b;
+    color: white;
+    padding: 10px 20px;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+    margin: 5px;
+}
+
+#login-form button:hover,
+#user-info button:hover {
+    background-color: #005f55;
+}
