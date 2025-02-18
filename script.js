@@ -13,6 +13,124 @@ const videoContainer = document.getElementById('video-container');
 const toggleSearchButton = document.getElementById('toggle-search-button');
 const searchContainer = document.getElementById('search-container');
 
+// --  Variables pour la gestion du compte utilisateur  --
+const usernameInput = document.getElementById('username');
+const passwordInput = document.getElementById('password');
+const loginButton = document.getElementById('login-button');
+const signupButton = document.getElementById('signup-button');
+const logoutButton = document.getElementById('logout-button');
+const userArea = document.getElementById('user-area');
+const userInfo = document.getElementById('user-info');
+const loginForm = document.getElementById('login-form');
+const userDisplayName = document.getElementById('user-display-name');
+const timeSpentDisplay = document.getElementById('time-spent');
+let startTime = Date.now();
+let intervalId;
+
+
+// --  Fonctions pour la gestion du compte utilisateur  --
+function login() {
+    const username = usernameInput.value;
+    const password = passwordInput.value;
+
+    // Récupérer les utilisateurs du localStorage
+    const users = JSON.parse(localStorage.getItem('users')) || [];
+
+    // Trouver l'utilisateur
+    const user = users.find(u => u.username === username && u.password === password);
+
+    if (user) {
+        // Connexion réussie
+        localStorage.setItem('loggedInUser', JSON.stringify({ username: user.username })); // Sauvegarder l'utilisateur connecté
+        updateUserInterface(user.username); // Mettre à jour l'interface
+        startTimer(); // Démarre le timer après la connexion
+    } else {
+        alert('Nom d\'utilisateur ou mot de passe incorrect.');
+    }
+}
+
+function signup() {
+    const username = usernameInput.value;
+    const password = passwordInput.value;
+
+    if (!username || !password) {
+        alert('Veuillez entrer un nom d\'utilisateur et un mot de passe.');
+        return;
+    }
+
+    // Récupérer les utilisateurs existants
+    const users = JSON.parse(localStorage.getItem('users')) || [];
+
+    // Vérifier si l'utilisateur existe déjà
+    if (users.some(user => user.username === username)) {
+        alert('Ce nom d\'utilisateur est déjà pris.');
+        return;
+    }
+
+    // Ajouter le nouvel utilisateur
+    users.push({ username, password }); // Enregistrez le mot de passe (dans un vrai système, jamais en clair !)
+    localStorage.setItem('users', JSON.stringify(users));
+    alert('Inscription réussie. Veuillez vous connecter.');
+}
+
+function logout() {
+    localStorage.removeItem('loggedInUser'); // Supprimer l'utilisateur connecté
+    updateUserInterface(); // Mettre à jour l'interface pour la déconnexion
+    stopTimer(); // Arrête le timer lors de la déconnexion
+    startTime = Date.now(); // Réinitialise le temps de départ
+}
+
+
+function updateUserInterface(username) {
+    if (username) {
+        // Utilisateur connecté
+        loginForm.style.display = 'none';
+        userInfo.style.display = 'block';
+        userDisplayName.textContent = username;
+    } else {
+        // Utilisateur non connecté
+        loginForm.style.display = 'block';
+        userInfo.style.display = 'none';
+        usernameInput.value = '';
+        passwordInput.value = '';
+    }
+}
+
+// Fonction pour démarrer le timer
+function startTimer() {
+    startTime = Date.now(); // Réinitialise le temps de départ
+    intervalId = setInterval(() => {
+        const now = Date.now();
+        const timeSpentInSeconds = Math.floor((now - startTime) / 1000);
+        timeSpentDisplay.textContent = timeSpentInSeconds;
+    }, 1000); // Met à jour toutes les secondes
+}
+
+// Fonction pour arrêter le timer
+function stopTimer() {
+    clearInterval(intervalId);
+}
+
+
+// --  Gestion des événements pour le compte utilisateur  --
+loginButton.addEventListener('click', login);
+signupButton.addEventListener('click', signup);
+logoutButton.addEventListener('click', logout);
+
+// -- Initialisation : Vérifier si un utilisateur est déjà connecté au chargement de la page --
+document.addEventListener('DOMContentLoaded', () => {
+    const loggedInUser = localStorage.getItem('loggedInUser');
+    if (loggedInUser) {
+        const user = JSON.parse(loggedInUser);
+        updateUserInterface(user.username);
+        startTimer(); // Démarrer le timer si un utilisateur est connecté
+    } else {
+        updateUserInterface(); // Assurer que l'interface est correcte si personne n'est connecté
+    }
+});
+
+
+
 // Montrer ou cacher la zone de recherche
 toggleSearchButton.addEventListener('click', () => {
     if (searchContainer.style.display === 'none') {
