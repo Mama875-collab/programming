@@ -24,6 +24,21 @@
     </header>
 
     <main>
+        <section id="user-area">
+            <div id="login-form">
+                <h2>Connexion</h2>
+                <input type="text" id="username" placeholder="Nom d'utilisateur">
+                <input type="password" id="password" placeholder="Mot de passe">
+                <button id="login-button">Se connecter</button>
+                <button id="signup-button">S'inscrire</button>
+            </div>
+            <div id="user-info" style="display:none;">
+                <p>Bienvenue, <span id="user-display-name"></span> !</p>
+                <p>Temps passé sur la page: <span id="time-spent">0</span> secondes</p>
+                <button id="logout-button">Se déconnecter</button>
+            </div>
+        </section>
+
         <section id="about">
             <h2>À Propos de la Fibre Optique</h2>
             <p>La fibre optique est une technologie de transmission de données qui utilise des fils de verre pour transmettre des informations sous forme de lumière. Cela permet des connexions Internet ultra-rapides et fiables, idéales pour les foyers et les entreprises.</p>
