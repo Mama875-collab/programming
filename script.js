@@ -54,8 +54,8 @@ let hours = 0;
 let days = 0;
 
 // ** IMPORTANT: Définir les clés API ICI.  Remplacez par VOS vraies clés!**
-const googleApiKey = "VOTRE_CLE_GOOGLE_API";
-const youtubeApiKey = "VOTRE_CLE_YOUTUBE_API";
+const googleApiKey = "AIzaSyA4eqqy9F8KpaLwq2LRuqF8CpoIIr04u6s";
+const youtubeApiKey = "AIzaSyDI8jV1kbuyL8KyBYfR09SMadLrSIDRh-E";
 
 
 // --  Fonctions pour la gestion du compte utilisateur avec Firebase Auth --
