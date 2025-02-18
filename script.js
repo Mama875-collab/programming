@@ -53,6 +53,11 @@ let minutes = 0;
 let hours = 0;
 let days = 0;
 
+// ** IMPORTANT: Définir les clés API ICI.  Remplacez par VOS vraies clés!**
+const googleApiKey = "VOTRE_CLE_GOOGLE_API";
+const youtubeApiKey = "VOTRE_CLE_YOUTUBE_API";
+
+
 // --  Fonctions pour la gestion du compte utilisateur avec Firebase Auth --
 function signup() {
     const email = usernameInput.value; // Utilisez username comme email pour l'exemple
@@ -60,6 +65,16 @@ function signup() {
 
     if (!email || !password) {
         alert('Veuillez entrer un email et un mot de passe.');
+        return;
+    }
+
+    if (!email.includes('@')) { // Validation d'email simple
+        alert('Veuillez entrer une adresse email valide.');
+        return;
+    }
+
+    if (password.length < 6) {
+        alert('Le mot de passe doit comporter au moins 6 caractères.');
         return;
     }
 
@@ -73,7 +88,15 @@ function signup() {
         .catch((error) => {
             const errorCode = error.code;
             const errorMessage = error.message;
-            alert(`Erreur lors de l'inscription: ${errorCode} - ${errorMessage}`);
+            let alertMessage = `Erreur lors de l'inscription: ${errorCode} - ${errorMessage}`;
+
+            // Afficher des erreurs plus spécifiques
+            if (errorCode === 'auth/email-already-in-use') {
+                alertMessage = 'Cet email est déjà utilisé. Veuillez en choisir un autre.';
+            } else if (errorCode === 'auth/weak-password') {
+                alertMessage = 'Le mot de passe est trop faible. Il doit comporter au moins 6 caractères.';
+            }
+            alert(alertMessage);
             // ... gérer l'erreur (par exemple, afficher un message à l'utilisateur) ...
         });
 }
@@ -81,6 +104,11 @@ function signup() {
 function login() {
     const email = usernameInput.value; // Utilisez username comme email pour l'exemple
     const password = passwordInput.value;
+
+    if (!email || !password) {
+        alert('Veuillez entrer un email et un mot de passe.');
+        return;
+    }
 
     firebase.auth().signInWithEmailAndPassword(email, password)
         .then((userCredential) => {
@@ -94,7 +122,18 @@ function login() {
         .catch((error) => {
             const errorCode = error.code;
             const errorMessage = error.message;
-            alert(`Erreur lors de la connexion: ${errorCode} - ${errorMessage}`);
+            let alertMessage = `Erreur lors de la connexion: ${errorCode} - ${errorMessage}`;
+
+             // Afficher des erreurs plus spécifiques
+             if (errorCode === 'auth/user-not-found') {
+                alertMessage = 'Aucun utilisateur trouvé avec cet email.';
+            } else if (errorCode === 'auth/wrong-password') {
+                alertMessage = 'Mot de passe incorrect.';
+            } else if (errorCode === 'auth/invalid-email') {
+                 alertMessage = 'Adresse email invalide.';
+             }
+
+            alert(alertMessage);
         });
 }
 
@@ -171,6 +210,11 @@ youtubeSearchButton.addEventListener('click', () => {
 
 // Fonction pour rechercher sur Google
 function searchGoogle(query) {
+    if (!googleApiKey) {
+        alert("Clé API Google manquante.  Veuillez définir googleApiKey.");
+        return;
+    }
+
     fetch(`https://www.googleapis.com/customsearch/v1?key=${googleApiKey}&cx=00746c2a86b294cd0&q=${query}`)
         .then(response => response.json())
         .then(data => displayGoogleResults(data.items))
@@ -179,7 +223,11 @@ function searchGoogle(query) {
 
 // Fonction pour rechercher sur YouTube
 function searchYouTube(query) {
-    // Ajoute le paramètre maxResults à l'URL de la requête
+     if (!youtubeApiKey) {
+        alert("Clé API YouTube manquante.  Veuillez définir youtubeApiKey.");
+        return;
+    }
+
     fetch(`https://www.googleapis.com/youtube/v3/search?key=${youtubeApiKey}&q=${query}&part=snippet&type=video&maxResults=20`) // Modifie maxResults pour obtenir plus de résultats (ex: 20)
         .then(response => response.json())
         .then(data => displayYouTubeResults(data.items))
