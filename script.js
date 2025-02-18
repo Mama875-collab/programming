@@ -1,5 +1,27 @@
-const googleApiKey = 'AIzaSyA4eqqy9F8KpaLwq2LRuqF8CpoIIr04u6s'; // Remplacez par votre clé API Google
-const youtubeApiKey = 'AIzaSyDI8jV1kbuyL8KyBYfR09SMadLrSIDRh-E'; // Remplacez par votre clé API YouTube
+// Remplacez par vos vraies clés API et votre configuration Firebase
+// Import the functions you need from the SDKs you need (Pas besoin avec CDN)
+// import { initializeApp } from "firebase/app";
+// import { getAnalytics } from "firebase/analytics";
+
+// TODO: Add SDKs for Firebase products that you want to use
+// https://firebase.google.com/docs/web/setup#available-libraries
+
+// Your web app's Firebase configuration
+// For Firebase JS SDK v7.20.0 and later, measurementId is optional
+const firebaseConfig = {
+    apiKey: "AIzaSyDN9yTsDqCqGZs4SAH3UuydvlWn_Ov902g",
+    authDomain: "programme-b0849.firebaseapp.com",
+    projectId: "programme-b0849",
+    storageBucket: "programme-b0849.firebasestorage.app",
+    messagingSenderId: "622151454923",
+    appId: "1:622151454923:web:1596678d91eb7c55f0cb4e",
+    measurementId: "G-5JT8HPFZDH"
+};
+
+// Initialize Firebase (Utiliser firebase.initializeApp pour la compatibilité CDN)
+firebase.initializeApp(firebaseConfig);
+const auth = firebase.auth();  //  <-- Ajouter cette ligne pour initialiser auth
+// const analytics = getAnalytics(app);   //  Pas nécessaire avec le code actuel
 
 const googleSearchButton = document.getElementById('google-search-button');
 const googleSearchInput = document.getElementById('google-search-input');
@@ -26,67 +48,88 @@ const userDisplayName = document.getElementById('user-display-name');
 const timeSpentDisplay = document.getElementById('time-spent');
 let startTime = Date.now();
 let intervalId;
+let seconds = 0;
+let minutes = 0;
+let hours = 0;
+let days = 0;
 
-
-// --  Fonctions pour la gestion du compte utilisateur  --
-function login() {
-    const username = usernameInput.value;
+// --  Fonctions pour la gestion du compte utilisateur avec Firebase Auth --
+function signup() {
+    const email = usernameInput.value; // Utilisez username comme email pour l'exemple
     const password = passwordInput.value;
 
-    // Récupérer les utilisateurs du localStorage
-    const users = JSON.parse(localStorage.getItem('users')) || [];
-
-    // Trouver l'utilisateur
-    const user = users.find(u => u.username === username && u.password === password);
-
-    if (user) {
-        // Connexion réussie
-        localStorage.setItem('loggedInUser', JSON.stringify({ username: user.username })); // Sauvegarder l'utilisateur connecté
-        updateUserInterface(user.username); // Mettre à jour l'interface
-        startTimer(); // Démarre le timer après la connexion
-    } else {
-        alert('Nom d\'utilisateur ou mot de passe incorrect.');
+    if (!email || !password) {
+        alert('Veuillez entrer un email et un mot de passe.');
+        return;
     }
+
+    firebase.auth().createUserWithEmailAndPassword(email, password)
+        .then((userCredential) => {
+            // Utilisateur créé
+            const user = userCredential.user;
+            alert('Inscription réussie.');
+            // Vous pouvez ici mettre à jour l'interface utilisateur
+        })
+        .catch((error) => {
+            const errorCode = error.code;
+            const errorMessage = error.message;
+            alert(`Erreur lors de l'inscription: ${errorCode} - ${errorMessage}`);
+            // ... gérer l'erreur (par exemple, afficher un message à l'utilisateur) ...
+        });
 }
 
-function signup() {
-    const username = usernameInput.value;
+function login() {
+    const email = usernameInput.value; // Utilisez username comme email pour l'exemple
     const password = passwordInput.value;
 
-    if (!username || !password) {
-        alert('Veuillez entrer un nom d\'utilisateur et un mot de passe.');
-        return;
-    }
-
-    // Récupérer les utilisateurs existants
-    const users = JSON.parse(localStorage.getItem('users')) || [];
-
-    // Vérifier si l'utilisateur existe déjà
-    if (users.some(user => user.username === username)) {
-        alert('Ce nom d\'utilisateur est déjà pris.');
-        return;
-    }
-
-    // Ajouter le nouvel utilisateur
-    users.push({ username, password }); // Enregistrez le mot de passe (dans un vrai système, jamais en clair !)
-    localStorage.setItem('users', JSON.stringify(users));
-    alert('Inscription réussie. Veuillez vous connecter.');
+    firebase.auth().signInWithEmailAndPassword(email, password)
+        .then((userCredential) => {
+            // Signed in
+            const user = userCredential.user;
+            alert('Connexion réussie.');
+            updateUserInterface(user.email); // Mettez à jour l'interface utilisateur
+            startTimer();
+            // ...
+        })
+        .catch((error) => {
+            const errorCode = error.code;
+            const errorMessage = error.message;
+            alert(`Erreur lors de la connexion: ${errorCode} - ${errorMessage}`);
+        });
 }
 
 function logout() {
-    localStorage.removeItem('loggedInUser'); // Supprimer l'utilisateur connecté
-    updateUserInterface(); // Mettre à jour l'interface pour la déconnexion
-    stopTimer(); // Arrête le timer lors de la déconnexion
-    startTime = Date.now(); // Réinitialise le temps de départ
+    firebase.auth().signOut().then(() => {
+        // Déconnexion réussie
+        alert('Déconnexion réussie.');
+        updateUserInterface(); // Mettre à jour l'interface utilisateur
+        stopTimer();
+    }).catch((error) => {
+        // Une erreur s'est produite
+        console.error("Erreur de déconnexion :", error);
+        alert("Erreur lors de la déconnexion.");
+    });
 }
 
+// --  Gestion de l'état d'authentification  --
+firebase.auth().onAuthStateChanged((user) => {
+    if (user) {
+        // L'utilisateur est connecté
+        updateUserInterface(user.email); // Mettre à jour l'interface utilisateur
+        startTimer(); // Démarrer le timer
+    } else {
+        // L'utilisateur est déconnecté
+        updateUserInterface(); // Mettre à jour l'interface utilisateur
+        stopTimer(); // Arrêter le timer
+    }
+});
 
-function updateUserInterface(username) {
-    if (username) {
+function updateUserInterface(email) {
+    if (email) {
         // Utilisateur connecté
         loginForm.style.display = 'none';
         userInfo.style.display = 'block';
-        userDisplayName.textContent = username;
+        userDisplayName.textContent = email; // Affiche l'email
     } else {
         // Utilisateur non connecté
         loginForm.style.display = 'block';
@@ -95,41 +138,6 @@ function updateUserInterface(username) {
         passwordInput.value = '';
     }
 }
-
-// Fonction pour démarrer le timer
-function startTimer() {
-    startTime = Date.now(); // Réinitialise le temps de départ
-    intervalId = setInterval(() => {
-        const now = Date.now();
-        const timeSpentInSeconds = Math.floor((now - startTime) / 1000);
-        timeSpentDisplay.textContent = timeSpentInSeconds;
-    }, 1000); // Met à jour toutes les secondes
-}
-
-// Fonction pour arrêter le timer
-function stopTimer() {
-    clearInterval(intervalId);
-}
-
-
-// --  Gestion des événements pour le compte utilisateur  --
-loginButton.addEventListener('click', login);
-signupButton.addEventListener('click', signup);
-logoutButton.addEventListener('click', logout);
-
-// -- Initialisation : Vérifier si un utilisateur est déjà connecté au chargement de la page --
-document.addEventListener('DOMContentLoaded', () => {
-    const loggedInUser = localStorage.getItem('loggedInUser');
-    if (loggedInUser) {
-        const user = JSON.parse(loggedInUser);
-        updateUserInterface(user.username);
-        startTimer(); // Démarrer le timer si un utilisateur est connecté
-    } else {
-        updateUserInterface(); // Assurer que l'interface est correcte si personne n'est connecté
-    }
-});
-
-
 
 // Montrer ou cacher la zone de recherche
 toggleSearchButton.addEventListener('click', () => {
@@ -230,4 +238,46 @@ function loadVideo(videoId) {
     videoContainer.innerHTML = `
         <iframe src="https://www.youtube.com/embed/${videoId}" frameborder="0" allowfullscreen></iframe>
     `;
+}
+
+function startTimer() {
+    startTime = Date.now();
+    seconds = 0;
+    minutes = 0;
+    hours = 0;
+    days = 0;
+
+    if (intervalId) {
+        clearInterval(intervalId); // Arrêter l'intervalle précédent si existant
+    }
+
+    intervalId = setInterval(updateTimer, 1000);
+}
+
+function updateTimer() {
+    seconds++;
+
+    if (seconds >= 60) {
+        seconds = 0;
+        minutes++;
+        if (minutes >= 60) {
+            minutes = 0;
+            hours++;
+            if (hours >= 24) {
+                hours = 0;
+                days++;
+            }
+        }
+    }
+
+    timeSpentDisplay.textContent = `${days}j ${hours}h ${minutes}m ${seconds}s`;
+}
+
+function stopTimer() {
+    clearInterval(intervalId);
+    seconds = 0;
+    minutes = 0;
+    hours = 0;
+    days = 0;
+    timeSpentDisplay.textContent = '0s'; // Réinitialiser l'affichage
 }
