@@ -1,5 +1,6 @@
 const googleApiKey = 'AIzaSyA4eqqy9F8KpaLwq2LRuqF8CpoIIr04u6s'; // Remplacez par votre clé API Google
 const youtubeApiKey = 'AIzaSyDI8jV1kbuyL8KyBYfR09SMadLrSIDRh-E'; // Remplacez par votre clé API YouTube
+const amazonApiKey = 'YOUR_AMAZON_API_KEY'; // Remplacez par votre clé API Amazon
 
 const googleSearchButton = document.getElementById('google-search-button');
 const googleSearchInput = document.getElementById('google-search-input');
@@ -8,6 +9,10 @@ const googleResults = document.getElementById('google-results');
 const youtubeSearchButton = document.getElementById('youtube-search-button');
 const youtubeSearchInput = document.getElementById('youtube-search-input');
 const youtubeResults = document.getElementById('youtube-results');
+
+const amazonSearchButton = document.getElementById('amazon-search-button');
+const amazonSearchInput = document.getElementById('amazon-search-input');
+const amazonResults = document.getElementById('amazon-results');
 
 const videoContainer = document.getElementById('video-container');
 const toggleSearchButton = document.getElementById('toggle-search-button');
@@ -23,6 +28,7 @@ toggleSearchButton.addEventListener('click', () => {
         toggleSearchButton.innerText = "En savoir plus";
         googleResults.style.display = 'none';
         youtubeResults.style.display = 'none';
+        amazonResults.style.display = 'none';
         videoContainer.innerHTML = ''; // Efface la vidéo quand on cache la recherche
     }
 });
@@ -43,6 +49,14 @@ youtubeSearchButton.addEventListener('click', () => {
     searchYouTube(query);
 });
 
+// Rechercher sur Amazon lorsque l'utilisateur clique sur "Rechercher Amazon"
+amazonSearchButton.addEventListener('click', () => {
+    const query = amazonSearchInput.value;
+    if (!query) return;
+
+    searchAmazon(query);
+});
+
 // Fonction pour rechercher sur Google
 function searchGoogle(query) {
     fetch(`https://www.googleapis.com/customsearch/v1?key=${googleApiKey}&cx=00746c2a86b294cd0&q=${query}`)
@@ -53,11 +67,20 @@ function searchGoogle(query) {
 
 // Fonction pour rechercher sur YouTube
 function searchYouTube(query) {
-    // Ajoute le paramètre maxResults à l'URL de la requête
-    fetch(`https://www.googleapis.com/youtube/v3/search?key=${youtubeApiKey}&q=${query}&part=snippet&type=video&maxResults=20`) // Modifie maxResults pour obtenir plus de résultats (ex: 20)
+    fetch(`https://www.googleapis.com/youtube/v3/search?key=${youtubeApiKey}&q=${query}&part=snippet&type=video&maxResults=20`)
         .then(response => response.json())
         .then(data => displayYouTubeResults(data.items))
         .catch(error => console.error('Erreur YouTube:', error));
+}
+
+// Fonction pour rechercher sur Amazon
+function searchAmazon(query) {
+    const url = `YOUR_AMAZON_API_ENDPOINT`; // Remplacez avec votre URL Amazon API
+    
+    fetch(url)
+        .then(response => response.json())
+        .then(data => displayAmazonResults(data)) // Adaptez cette fonction selon la structure de réponse de l'API
+        .catch(error => console.error('Erreur Amazon:', error));
 }
 
 // Afficher les résultats de recherche Google
@@ -105,6 +128,29 @@ function displayYouTubeResults(results) {
         youtubeResults.appendChild(resultDiv);
     });
     youtubeResults.style.display = 'block';
+}
+
+// Afficher les résultats de recherche Amazon
+function displayAmazonResults(results) {
+    amazonResults.innerHTML = '';
+    if (!results || results.length === 0) {
+        amazonResults.innerHTML = `<div>Aucun résultat Amazon trouvé.</div>`;
+        amazonResults.style.display = 'block';
+        return;
+    }
+
+    results.forEach(item => {
+        const title = item.Title; // Remplacez par la clé appropriée selon la réponse de l'API
+        const link = item.DetailPageURL; // Remplacez par la clé appropriée pour le lien produit
+
+        const resultDiv = document.createElement('div');
+        resultDiv.classList.add('result');
+        resultDiv.innerHTML = `
+            <h3><a href="${link}" target="_blank" rel="noopener noreferrer">${title}</a></h3>
+        `;
+        amazonResults.appendChild(resultDiv);
+    });
+    amazonResults.style.display = 'block';
 }
 
 // Charger la vidéo sélectionnée
